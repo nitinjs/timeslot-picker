@@ -7,8 +7,18 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="http://code.interactjs.io/v1.3.4/interact.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script type="text/javascript">
         var oneUnit = 56;
+        var a = 0;
+        var b = 0;
+        var x = 0;
+        var y = 0;
+        var m = 0;
+        var n = 0;
+        var startingTime;
+        var timeSlots;
+
         function roundTime(number, increment, offset) {
             return Math.ceil((number - offset) / increment) * increment + offset;
         }
@@ -19,9 +29,9 @@
             for (var x = from; x <= to; x++) {
                 var $time_value = $("<td></td>");
                 var $center = $("<center></center>")
-                .css("font-family", "Calibri, sans-serif");
+                    .css("font-family", "Calibri, sans-serif");
                 var txt = x >= 12 ? "<sup>PM</sup>" : "<sup>AM</sup>";
-                $center.html((x>12?(x-12):x)+"&nbsp;");
+                $center.html((x > 12 ? (x - 12) : x) + "&nbsp;");
                 var $sup = $("<sup></sup>");
                 $sup.css("font-weight", "normal");
                 $sup.css("vertical-align", "middle");
@@ -35,7 +45,7 @@
                 $time_value.append($center);
                 $time_value.appendTo($container);
             }
-
+            $("#resize_container_td").attr("colspan", to - from + 1);
         }
 
         function ConvertTimeToPixels(fromTime, time) {
@@ -54,7 +64,7 @@
             var fromText = $($("#time_value_container td:first").find("center")).text();
             var fromHours = fromText.indexOf("PM") >= 0 ? (parseInt(fromText) + 12) : parseInt(fromText);
             if ((units + "").indexOf(".") >= 0) {
-                var arrUnits = (units+"").split(".");
+                var arrUnits = (units + "").split(".");
 
                 var hours = parseInt(arrUnits[0]) + fromHours;
                 var minutes = "00";
@@ -82,15 +92,15 @@
             var $container = $(".resize_container");
             var $allowedSlot = $("<div></div>");
             $allowedSlot.addClass("allowedSlot");
-            var leftPixels = ConvertTimeToPixels(parseInt(startingHours)+":00",from);
-            var fromPixels = ConvertTimeToPixels(from,from);
-            var toPixels = ConvertTimeToPixels(from,to);
+            var leftPixels = ConvertTimeToPixels(parseInt(startingHours) + ":00", from);
+            var fromPixels = ConvertTimeToPixels(from, from);
+            var toPixels = ConvertTimeToPixels(from, to);
             $allowedSlot.css("left", leftPixels + "px");
             $allowedSlot.css("width", (toPixels - fromPixels) + "px");
             $allowedSlot.appendTo($container);
         }
 
-        function CheckValidity(x) {
+        function CheckValidity(x, first) {
             var currentUnit = $(".resize-drag").outerWidth();
             var width = (roundTime(currentUnit, (oneUnit / 4), 0) / oneUnit) - 0.25;
             console.log("width:" + width);
@@ -111,17 +121,17 @@
                 $(".resize-drag").removeClass("resizeValid");
             }
 
-            var fromSelected = (ConvertUnitsToTime(fromLeft+0.25));
-            var toSelected = (ConvertUnitsToTime(fromLeft + width+0.25));
+            var fromSelected = (ConvertUnitsToTime(fromLeft + 0.25));
+            var toSelected = (ConvertUnitsToTime(fromLeft + width + 0.25));
             $("#time_selected").html(fromSelected + " to " + toSelected);
-            console.log(fromSelected + " to " + toSelected);
+            //console.log(fromSelected + " to " + toSelected);
             if ($(".resize-drag").outerWidth() <= 143) {
                 $("#time_selected").hide();
             } else {
                 $("#time_selected").show();
             }
 
-            OnChange(fromSelected,toSelected);
+            OnChange(fromSelected, toSelected, first);
         }
 
         function ShowTimeRangePicker(elm) {
@@ -135,127 +145,135 @@
             $("#time_strip_table").fadeIn();
         }
 
-        function OnChange(from,to) {
-            $("#action_qty").val(from+" to "+to);
+        function OnChange(from, to, first) {
+            $("#action_qty").val(from + " to " + to);
+            if (!first)
+                onTimeslotChanged({ from: from, to: to, isValid: $(".resize-drag").hasClass("resizeValid") });
         }
 
         function HideTimeRangePicker(elm) {
             $("#time_strip_table").fadeOut().promise().done(function () {
                 $("#time_strip_table").css("transform", "");
-            });            
+            });
+        }
+
+        function dragMoveListener(event) {
+            var target = event.target;
+            // keep the dragged position in the data-x/data-y attributes
+            m = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+            n = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+            // translate the element
+            target.style.webkitTransform =
+                target.style.transform =
+                'translate(' + m + 'px, ' + n + 'px)';
+
+            // update the posiion attributes
+            target.setAttribute('data-x', m);
+            target.setAttribute('data-y', n);
         }
 
         $(document).ready(function () {
-            AddHours(9, 20);
-            AddAllowedSlot("10:15", "17:00");
-            var a, b;
+            startingTime = JSON.parse($("#action_qty").attr("starting-time"));
+            timeSlots = JSON.parse($("#action_qty").attr("time-slots"));
+
+            AddHours(startingTime.from, startingTime.to);
+            for (var x = 0; x < timeSlots.length; x++) {
+                var allowedSlot = timeSlots[x];
+                AddAllowedSlot(allowedSlot.from, allowedSlot.to);
+            }
 
             interact('.resize-drag')
-            .draggable({
-                //snap: {
-                //    targets: [
-                //        interact.createSnapGrid({ x: 15, y: 1 })
-                //    ],
-                //    range: Infinity,
-                //    relativePoints: [{ x: 0, y: 0 }]
-                //},
-                restrict: {
-                    restriction: 'parent',
-                    elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
-                    endOnly: true
-                },
-            })
-            .resizable({
-                // resize from all edges and corners
-                edges: { left: true, right: true, bottom: false, top: false },
-                //snap: {
-                //    targets: [
-                //        interact.createSnapGrid({ x: 18, y: 1 })
-                //    ],
-                //    relativePoints: [{ x: 0, y: 0 }]
-                //},
-                //snapSize: {
-                //    targets: [
-                //    { width: 50, height: 40, range: 1 },
-                //    ]
-                //},
+                .draggable({
+                    snap: {
+                        targets: [
+                            interact.createSnapGrid({ x: 15, y: 1 })
+                        ],
+                        range: Infinity,
+                        relativePoints: [{ x: 0, y: 0 }]
+                    },
+                    restrict: {
+                        restriction: 'parent',
+                        elementRect: { top: 0, left: 0, bottom: 1, right: 1 },
+                        endOnly: true
+                    },
+                })
+                .resizable({
+                    // resize from all edges and corners
+                    edges: { left: true, right: true, bottom: false, top: false },
+                    snap: {
+                        targets: [
+                            interact.createSnapGrid({ x: 15, y: 1 })
+                        ],
+                        relativePoints: [{ x: 0, y: 0 }]
+                    },
+                    snapSize: {
+                        targets: [
+                            { width: oneUnit, height: 40, range: 1 },
+                        ]
+                    },
 
-                // keep the edges inside the parent
-                restrictEdges: {
-                    outer: 'parent',
-                    endOnly: true,
-                },
+                    // keep the edges inside the parent
+                    restrictEdges: {
+                        outer: 'parent',
+                        endOnly: true,
+                    },
 
-                // minimum size
-                restrictSize: {
-                    min: { width: 25, height: 40 },
-                },
+                    // minimum size
+                    restrictSize: {
+                        min: { width: 25, height: 40 },
+                    },
 
-                inertia: true,
-            })
-            .on('resizemove', function (event) {
-                console.log("in resizemove");
-                var target = event.target,
-                    x = (parseFloat(target.getAttribute('data-x')) || 0),
+                    inertia: true,
+                })
+                .on('resizemove', function (event) {
+                    console.log("in resizemove");
+                    var target = event.target;
+                    x = (parseFloat(target.getAttribute('data-x')) || 0);
                     y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-                // update the element's style
-                target.style.width = event.rect.width + 'px';
-                target.style.height = event.rect.height + 'px';
+                    // update the element's style
+                    target.style.width = event.rect.width + 'px';
+                    target.style.height = event.rect.height + 'px';
 
-                // translate when resizing from top or left edges
-                x += event.deltaRect.left;
-                y += event.deltaRect.top;
+                    // translate when resizing from top or left edges
+                    x += event.deltaRect.left;
+                    y += event.deltaRect.top;
 
-                target.style.webkitTransform = target.style.transform =
-                    'translate(' + x + 'px,' + y + 'px)';
+                    target.style.webkitTransform = target.style.transform =
+                        'translate(' + x + 'px,' + y + 'px)';
 
-                target.setAttribute('data-x', x);
-                target.setAttribute('data-y', y);
-                //target.textContent = Math.round(event.rect.width) + '\u00D7' + Math.round(event.rect.height);
+                    target.setAttribute('data-x', x);
+                    target.setAttribute('data-y', y);
+                    //target.textContent = Math.round(event.rect.width) + '\u00D7' + Math.round(event.rect.height);
 
-                CheckValidity(x);
-            })
-            .on('dragmove', function (event) {
-                var target = event.target,
-                // keep the dragged position in the data-x/data-y attributes
-                a = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-                b = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                    CheckValidity(x);
+                })
+                .on('dragmove', function (event) {
+                    var target = event.target;
+                    // keep the dragged position in the data-x/data-y attributes
+                    a = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                    b = (parseFloat(target.getAttribute('data-y')) || 0);// + event.dy;
 
-                // translate the element
-                target.style.webkitTransform =
-                target.style.transform =
-                  'translate(' + a + 'px, ' + b + 'px)';
+                    // translate the element
+                    target.style.webkitTransform =
+                        target.style.transform =
+                        'translate(' + a + 'px, ' + b + 'px)';
 
-                // update the posiion attributes
-                target.setAttribute('data-x', a);
-                target.setAttribute('data-y', b);
+                    // update the posiion attributes
+                    target.setAttribute('data-x', a);
+                    target.setAttribute('data-y', b);
 
-                CheckValidity(a);
-            });
+                    CheckValidity(a);
+                });
+
 
             // target elements with the "draggable" class
             interact('#time_strip_table')
-              .draggable({
-                  autoScroll: true,
-                  onmove: dragMoveListener,
-              });
-
-            function dragMoveListener(event) {
-                var target = event.target,
-                    // keep the dragged position in the data-x/data-y attributes
-                    x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-                    y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-                // translate the element
-                target.style.webkitTransform =
-                target.style.transform =
-                  'translate(' + x + 'px, ' + y + 'px)';
-
-                // update the posiion attributes
-                target.setAttribute('data-x', x);
-                target.setAttribute('data-y', y);
-            }
+                .draggable({
+                    autoScroll: true,
+                    onmove: dragMoveListener,
+                });
 
             // this is used later in the resizing and gesture demos
             window.dragMoveListener = dragMoveListener;
@@ -263,107 +281,27 @@
             $(".resize-drag").on("dblclick", function () {
                 HideTimeRangePicker(this);
             });
+
+            CheckValidity(0, true);
+            //var logText = 'the element "' + eName + '" ';
+            //angular.element(element).on("click mousedown mouseup focus blur keydown change", function (e) {
+            //    console.log(new Date().toLocaleTimeString()+': "' + e.type + '"' + " event occurred for " + logText);
+            //});
         });
-    </script>
-    <style type="text/css">
-        .not-selectable {
-          -webkit-touch-callout: none;
-          -webkit-user-select: none;
-          -khtml-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
 
-        .resize_container {
-            display: inline-block;
-            width: 100%;
-            height: 40px;
-            background-color: #F1F1F1;
-            position: relative;
-        }
-
-        .resizeValid {
-            background-color: #AEC29D;
-        }
-
-        .resizeInvalid {
-            background-color: #B95C67;
-        }
-
-        .resize-drag {
-            color: white;
-            font-family: sans-serif;
-            padding: 0px;
-            margin: 0px 0px;
-            height: 40px;
-            width: 25px;
-            /* This makes things *much* easier */
-            box-sizing: border-box;
-            position: absolute;
-            z-index: 3;
-            -webkit-border-radius: 5px;
-            -moz-border-radius: 5px;
-            border-radius: 5px;
-        }
-
-        .time_strip_table {
-            border: 1px solid lightgray;
-            position: absolute;
-            top:0;
-            left:0;
-        }
-
-            .time_strip_table td {
-                text-align: center;
+        function onTimeslotChanged (data) {
+            try {
+                console.log("From:" + data.from + " to " + data.to + ", IsValid:" + data.isValid);
+            } catch (e) {
+                console.log(e);
             }
-
-        .clearfix {
-            clear: both;
         }
-
-        .allowedSlot {
-            background-color: #FFFFFF;
-            width: 150px;
-            height: 44px;
-            top: 0px;
-            left: 300px;
-            z-index: 2;
-            opacity: 0.7;
-            position: inherit;
-            border-left: 1px solid lightgray;
-            border-right: 1px solid lightgray;
-        }
-
-        .border_bottom td {
-            border-bottom: 1px solid lightgray;
-            padding-top: 8px;
-            padding-bottom: 8px;
-            /*padding-left: 18px;
-            padding-right: 18px;*/
-            width: 56px;
-            background: white;
-        }
-
-        .resize-drag i {
-            position: relative;
-            top: calc(50% - 10px); /* 50% - 3/4 of icon height */
-        }
-
-        .time_value, .border_bottom {
-            cursor: move;
-        }
-
-        .time_value center:after {
-            content: "AM";
-            font-size: 10px;
-            vertical-align:top;
-        }
-    </style>
+    </script>
+    <link href="Styles/style.css" rel="stylesheet" />
 </head>
 <body>
     <div class="parent">
-        <input type="text" id="action_qty" onfocus="ShowTimeRangePicker(this)" />
+        <input type="text" starting-time='{"from": 8, "to": 23}' time-slots='[{"from": "12:00", "to": "23:00"}]' id="action_qty" onfocus="ShowTimeRangePicker(this)" />
         <table id="time_strip_table" class="time_strip_table" border="0" cellpadding="0" cellspacing="0" style="display:none">
             <tr class="border_bottom not-selectable" id="time_value_container">
                 <td class="time_value">
