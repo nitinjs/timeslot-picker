@@ -1,0 +1,94 @@
+﻿.not-selectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.resize_container {
+    display: inline-block;
+    width: 100%;
+    height: 40px;
+    background-color: #F1F1F1;
+    position: relative;
+}
+
+.resizeValid {
+    background-color: #AEC29D;
+}
+
+.resizeInvalid {
+    background-color: #B95C67;
+}
+
+.resize-drag {
+    color: white;
+    font-family: sans-serif;
+    padding: 0px;
+    margin: 0px 0px;
+    height: 40px;
+    width: 150px;
+    /* This makes things *much* easier */
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 3;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    opacity: 0.80;
+}
+
+.time_strip_table {
+    border: 1px solid lightgray;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+    .time_strip_table td {
+        text-align: center;
+    }
+
+.clearfix {
+    clear: both;
+}
+
+.allowedSlot {
+    background-color: #FFFFFF;
+    width: 150px;
+    height: 44px;
+    top: 0px;
+    left: 300px;
+    z-index: 2;
+    opacity: 0.7;
+    position: inherit;
+    border-left: 1px solid lightgray;
+    border-right: 1px solid lightgray;
+}
+
+.border_bottom td {
+    border-bottom: 1px solid lightgray;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    /*padding-left: 18px;
+            padding-right: 18px;*/
+    width: 56px;
+    background: white;
+}
+
+.resize-drag i {
+    position: relative;
+    top: calc(50% - 10px); /* 50% - 3/4 of icon height */
+}
+
+.time_value, .border_bottom {
+    cursor: move;
+}
+
+    .time_value center:after {
+        content: "AM";
+        font-size: 10px;
+        vertical-align: top;
+    }
