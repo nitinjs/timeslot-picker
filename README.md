@@ -2,16 +2,16 @@
 day timeslot picker html control
 
 Features:
-1. Set starting from & to time
-2. Set valid from & to time
-3. Select single time slot from specified start time and end time
-4. Draggable component
+1. set starting from & to time
+2. set valid from & to time
+3. select single time slot from specified start time and end time
+4. draggable component
 5. timeslot validations
-    1. If selected time slot is not within the specified valid time slot then control becomes red
-    2. If selected time slot is within the specified valid time slot then control becomes green
-6. Angularjs implementation
+    1. if selected time slot is not within the specified valid time slot then control becomes red
+    2. if selected time slot is within the specified valid time slot then control becomes green
+6. angularjs implementation
 7. jQuery implementation
 
-[Demo](http://nitinsawant.com/timeslotpicker/)
+[demo](http://nitinsawant.com/timeslotpicker/)
 
 [click here to donate if you find this project helpful](https://paypal.me/nitinsa1?locale.x=en_GB)
