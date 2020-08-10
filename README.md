@@ -14,4 +14,4 @@ Features:
 
 [demo](http://nitinsawant.com/timeslotpicker/)
 
-[click here to donate if you find this project helpful](https://paypal.me/nitinsa1?locale.x=en_GB)
+[donate](https://paypal.me/nitinsa1?locale.x=en_GB)
