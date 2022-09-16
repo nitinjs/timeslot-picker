@@ -1,7 +1,7 @@
 # timeslot-picker/time-range picker html control
 
 ##Demo
-[click here](http://nitinsawant.com/timeslotpicker/)
+[click here](http://nitinsawant.com/timeslotpicker/demo.html)
 
 ## Roadmap:
 | No | Feature      | status |
