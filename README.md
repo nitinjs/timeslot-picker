@@ -1,7 +1,7 @@
 # timeslot-picker/time-range picker html control
 
 ## Demo
-[click here](http://nitinsawant.com/timeslotpicker/demo.html)
+[click here](http://nitinsawant.com/timeslot-picker/demo.html)
 
 ## Roadmap:
 | No | Feature      | status |
@@ -23,5 +23,3 @@
 | created by Nitin Sawant  |
 |------------|
 | <img src="https://www.google.com/a/cpanel/nitinsawant.com/images/logo.gif?service=google_gsuite" width="150"> |
-
-[donate](https://paypal.me/nitinsa1?locale.x=en_GB)
