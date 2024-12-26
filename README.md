@@ -2,7 +2,11 @@
 
 ## Usage
 ```
+<!--jQuery-->
 <input type="text" starting-time='{"from": 8, "to": 23}' time-slots='[{"from": "12:00", "to": "23:00"}]' id="action_qty" onfocus="ShowTimeRangePicker(this)" />
+
+<!--HTML5 + AngularJS-->
+<timeslot-picker id="myTimeslotPicker" starting-time="{from: 8, to: 23}" time-slots="[{from: '12:00', to: '23:00'}]" on-timeslot-changed="handleTimeslotChanged"></timeslot-picker>
 ```
 Parameters:
 starting-time: overall time slot limit
