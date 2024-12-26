@@ -1,5 +1,17 @@
 # timeslot-picker/time-range picker html control
 
+## Usage
+```
+<input type="text" starting-time='{"from": 8, "to": 23}' time-slots='[{"from": "12:00", "to": "23:00"}]' id="action_qty" onfocus="ShowTimeRangePicker(this)" />
+```
+Parameters:
+starting-time: overall time slot limit
+time-slots: time slots which are valid, if selected time range is within the required time slot then the bar will become green otherwise it will be red
+
+### validations
+    1. if selected time slot is not within the specified valid time slot then control becomes red
+    2. if selected time slot is within the specified valid time slot then control becomes green
+
 ## Demo
 [click here](http://nitinsawant.com/timeslot-picker/demo.html)
 
@@ -15,11 +27,6 @@
 | 7. | [jQuery implementation](https://github.com/nitinjs/timeslot-picker/blob/master/demo.html)  | ✅ |
 | 8. | Close button for the picker          | 🚧 |
 | 9. | Angular2 version          | 🚧 |
- 
-### validations
-    1. if selected time slot is not within the specified valid time slot then control becomes red
-    2. if selected time slot is within the specified valid time slot then control becomes green
 
-| created by Nitin Sawant  |
-|------------|
-| <img src="https://www.google.com/a/cpanel/nitinsawant.com/images/logo.gif?service=google_gsuite" width="150"> |
+
+made with 🧡 in mumbai
