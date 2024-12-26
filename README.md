@@ -8,14 +8,14 @@
 <!--HTML5 + AngularJS-->
 <timeslot-picker id="myTimeslotPicker" starting-time="{from: 8, to: 23}" time-slots="[{from: '12:00', to: '23:00'}]" on-timeslot-changed="handleTimeslotChanged"></timeslot-picker>
 ```
-Parameters:
-starting-time: overall time slot limit
-time-slots: time slots which are valid, if selected time range is within the required time slot then the bar will become green otherwise it will be red
-
+Parameters:<br/>
+starting-time: overall time slot limit<br/>
+time-slots: time slots which are valid, if selected time range is within the required time slot then the bar will become green otherwise it will be red<br/>
+<br/>
 ### validations
     1. if selected time slot is not within the specified valid time slot then control becomes red
     2. if selected time slot is within the specified valid time slot then control becomes green
-
+<br/>
 ## Demo
 [click here](http://nitinsawant.com/timeslot-picker/demo.html)
 
