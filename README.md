@@ -17,6 +17,7 @@ time-slots: time slots which are valid, if selected time range is within the req
     2. if selected time slot is within the specified valid time slot then control becomes green
 <br/>
 ## Demo
+
 [click here](http://nitinsawant.com/timeslot-picker/demo.html)
 
 ## Roadmap:
